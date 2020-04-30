@@ -1,4 +1,4 @@
-from employee_system.constants import Success,Error
+from employee_system.constants import Success, Error
 
 
 class SuccessResponse(object):

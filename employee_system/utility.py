@@ -11,6 +11,7 @@ from employee_system.response import SuccessResponse, ErrorResponse
 
 logger = logging.getLogger(__name__)
 
+
 def to_dict(obj):
     """Represent instance of a class as dict.
         Arguments:

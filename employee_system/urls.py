@@ -5,6 +5,6 @@ from employee_system.views import EmployeeViewSet, LeaveViewSet
 router = routers.SimpleRouter()
 router.register(r'employee', EmployeeViewSet, basename='employee')
 router.register(r'leave', LeaveViewSet, basename='leave')
-urlpatterns=[
+urlpatterns = [
     url(r'^', include(router.urls)),
 ]

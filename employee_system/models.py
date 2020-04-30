@@ -13,7 +13,7 @@ class Permission(models.Model):
 
 class Role(models.Model):
     class Meta(object):
-        db_table ='role'
+        db_table = 'role'
 
     role_name = models.CharField(max_length=200, blank=False, unique=True)
     permission = models.ManyToManyField(Permission,blank=True, null=True)

@@ -75,15 +75,6 @@ WSGI_APPLICATION = 'nutrabay.wsgi.application'
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'nutrabay',
-    #     'HOST': 'localhost',
-    #     'POST': '3306',
-    #     'USER': 'root',
-    #     'PASSWORD': 'rupal123',
-    # }
-
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'nutrabay_db',

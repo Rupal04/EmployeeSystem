@@ -14,7 +14,7 @@ class EmployeeViewSet(viewsets.ViewSet):
     def create(self, request):
         try:
             data = request.data
-            created_by = request.query_params.get('id',None)
+            created_by = request.query_params.get('id', None)
 
             response = create_employee(**{"data": data, "created_by": created_by})
 
@@ -81,9 +81,9 @@ class EmployeeViewSet(viewsets.ViewSet):
 
 
 class LeaveViewSet(viewsets.ViewSet):
-    def create(self,request):
+    def create(self, request):
         try:
-            data=request.data
+            data = request.data
             created_by = request.query_params.get('id', None)
 
             response = create_leave_request(**{"created_by": created_by, "data": data})
@@ -101,4 +101,3 @@ class LeaveViewSet(viewsets.ViewSet):
             logger.error(Error.EXCEPTION + str(e))
             response = ServerErrorResponse()
             return Response(to_dict(response), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-

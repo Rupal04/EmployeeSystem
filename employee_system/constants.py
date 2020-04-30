@@ -15,7 +15,7 @@ class Error(object):
 
     EMPLOYEE_CREATION_ERROR = "Error in adding Employee"
     EMPLOYEE_DELETION_ERROR = "Error in removing Employee"
-    EMPLOYEE_ID_MISSING="Employee ID is missing"
+    EMPLOYEE_ID_MISSING = "Employee ID is missing"
     EMPLOYEE_CREATION_UNAUTHORIZED = "You are not authorized to add this employee."
     EMPLOYEE_DELETION_UNAUTHORIZED = "You are not authorized to remove this employee."
     EMPLOYEE_NOT_EXIST = "Employee does not exist."
@@ -33,11 +33,10 @@ class Warn(object):
 class Roles(object):
     ADMIN = 1
     MANAGER = 2
-    EXECUTIVE =3
+    EXECUTIVE = 3
 
 
 class Permissions(object):
     ADD = 1
     REMOVE = 2
     VIEW = 3
-
