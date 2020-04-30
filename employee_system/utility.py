@@ -1,9 +1,9 @@
 import logging
 
 from datetime import datetime
-from employee_system.constants import Error,Roles, Success
+from employee_system.constants import Error,Roles, Success, Permissions
 from django.core.cache import cache
-from employee_system.models import Employee, LeaveRequest
+from employee_system.models import Employee, LeaveRequest, Permission, Role
 from employee_system.keys import get_employee_by_id, CacheNameSpace
 from employee_system.serializers import LeaveRequestSerializer, EmployeeSerializer
 from employee_system.response import SuccessResponse, ErrorResponse
@@ -117,10 +117,21 @@ def get_employee_data(emp_id):
 
             if Employee.objects.filter(id=emp_id).exists():
 
+                is_allowed = False
                 emp_obj = Employee.objects.get(id=emp_id)
-                emp_serialized_obj = EmployeeSerializer(emp_obj)
-
-                cache.set(get_employee_by_id(str(emp_id)), emp_serialized_obj, CacheNameSpace.EMPLOYEE_DATA[1])
+                permissions = Permission.objects.filter(role__id=emp_obj.role_id)
+                if permissions:
+                    for permission in permissions:
+                        if permission.id == Permissions.VIEW:
+                            is_allowed = True
+                            break
+                    if is_allowed:
+                        emp_serialized_obj = EmployeeSerializer(emp_obj)
+                        cache.set(get_employee_by_id(str(emp_id)), emp_serialized_obj, CacheNameSpace.EMPLOYEE_DATA[1])
+                    else:
+                        return ErrorResponse(msg=Error.EMPLOYEE_NOT_ALLOWED_TO_VIEW_PROFILE)
+                else:
+                    return ErrorResponse(msg=Error.EMPLOYEE_NOT_ALLOWED_TO_VIEW_PROFILE)
 
         return SuccessResponse(msg=Success.EMPLOYEE_FETCHED_SUCCESS, results=emp_serialized_obj.data)
 
