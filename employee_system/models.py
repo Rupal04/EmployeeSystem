@@ -25,7 +25,7 @@ class Employee(models.Model):
 
     fname = models.CharField(max_length=100, blank=False)
     lname = models.CharField(max_length=100, blank=False)
-    email = models.CharField(max_length=200, blank=True)
+    email = models.CharField(max_length=200, blank=True, unique=True)
     role = models.ForeignKey(Role, blank=True, on_delete=models.CASCADE)
     manager = models.ForeignKey('self', blank=True, null=True, related_name='employee', on_delete=models.CASCADE)
 

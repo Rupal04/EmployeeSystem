@@ -3,7 +3,7 @@ import logging
 from datetime import datetime
 from employee_system.constants import Error,Roles, Success, Permissions
 from django.core.cache import cache
-from employee_system.models import Employee, LeaveRequest, Permission, Role
+from employee_system.models import Employee, LeaveRequest, Permission
 from employee_system.keys import get_employee_by_id, CacheNameSpace
 from employee_system.serializers import LeaveRequestSerializer, EmployeeSerializer
 from employee_system.response import SuccessResponse, ErrorResponse
@@ -42,6 +42,9 @@ def to_dict(obj):
 
 def create_employee(**kwargs):
     try:
+        created_by = None
+        data = None
+
         if 'created_by' in kwargs:
             created_by = kwargs.get('created_by')
 
@@ -56,16 +59,21 @@ def create_employee(**kwargs):
             email = data.get("email", "")
             role_id = int(data.get("role_id"))
             manager_id = None
+
             if emp_obj.role_id == Roles.MANAGER:
                 manager_id = emp_obj.id
 
-            if emp_obj.role_id == Roles.ADMIN or (emp_obj.role_id == Roles.MANAGER and role_id == Roles.EXECUTIVE):
+            permission = Permission.objects.filter(role__id=emp_obj.role_id, id=Permissions.ADD).first()
+
+            if permission and (emp_obj.role_id == Roles.ADMIN or
+                               (emp_obj.role_id == Roles.MANAGER and role_id == Roles.EXECUTIVE)):
 
                 create_emp_resp = Employee.objects.create(fname=fname, lname=lname, email=email,
                                                           role_id=role_id, manager_id=manager_id)
-
                 emp_serialized_obj = EmployeeSerializer(create_emp_resp)
+
                 return SuccessResponse(msg=Success.EMPLOYEE_CREATE_SUCCESS, results=emp_serialized_obj.data)
+
             else:
                 return ErrorResponse(msg=Error.EMPLOYEE_CREATION_UNAUTHORIZED)
         else:
@@ -75,8 +83,11 @@ def create_employee(**kwargs):
         logger.error(Error.EMPLOYEE_CREATION_ERROR + str(e))
         return None
 
+
 def delete_employee(**kwargs):
     try:
+        deleted_by = None
+        emp_id = None
         if 'deleted_by' in kwargs:
             deleted_by = kwargs.get('deleted_by')
 
@@ -87,9 +98,11 @@ def delete_employee(**kwargs):
                 Employee.objects.filter(id=emp_id).exists():
 
             emp_obj = Employee.objects.get(id=deleted_by)
+            permission = Permission.objects.filter(id=Permissions.REMOVE, role__id=emp_obj.role_id).first()
+
             emp_delete_obj = Employee.objects.get(id=emp_id)
 
-            if emp_obj.role_id == Roles.ADMIN or (emp_obj.role_id == Roles.MANAGER
+            if permission and emp_obj.role_id == Roles.ADMIN or (emp_obj.role_id == Roles.MANAGER
                 and emp_delete_obj.role_id == Roles.EXECUTIVE and emp_delete_obj.manager_id == emp_obj.id):
 
                 emp_delete_obj.delete()
@@ -97,6 +110,7 @@ def delete_employee(**kwargs):
 
             else:
                 return ErrorResponse(msg=Error.EMPLOYEE_DELETION_UNAUTHORIZED)
+
         else:
             return ErrorResponse(msg=Error.EMPLOYEE_NOT_EXIST)
 
@@ -117,21 +131,14 @@ def get_employee_data(emp_id):
 
             if Employee.objects.filter(id=emp_id).exists():
 
-                is_allowed = False
                 emp_obj = Employee.objects.get(id=emp_id)
-                permissions = Permission.objects.filter(role__id=emp_obj.role_id)
-                if permissions:
-                    for permission in permissions:
-                        if permission.id == Permissions.VIEW:
-                            is_allowed = True
-                            break
-                    if is_allowed:
-                        emp_serialized_obj = EmployeeSerializer(emp_obj)
-                        cache.set(get_employee_by_id(str(emp_id)), emp_serialized_obj, CacheNameSpace.EMPLOYEE_DATA[1])
-                    else:
-                        return ErrorResponse(msg=Error.EMPLOYEE_NOT_ALLOWED_TO_VIEW_PROFILE)
+                permission = Permission.objects.filter(role__id=emp_obj.role_id, id=Permissions.VIEW).first()
+
+                if permission:
+                    emp_serialized_obj = EmployeeSerializer(emp_obj)
+                    cache.set(get_employee_by_id(str(emp_id)), emp_serialized_obj, CacheNameSpace.EMPLOYEE_DATA[1])
                 else:
-                    return ErrorResponse(msg=Error.EMPLOYEE_NOT_ALLOWED_TO_VIEW_PROFILE)
+                    return ErrorResponse(msg=Error.EMPLOYEE_VIEWING_UNAUTHORIZED)
 
         return SuccessResponse(msg=Success.EMPLOYEE_FETCHED_SUCCESS, results=emp_serialized_obj.data)
 
@@ -142,6 +149,8 @@ def get_employee_data(emp_id):
 
 def create_leave_request(**kwargs):
     try:
+        created_by = None
+        data = None
         if 'created_by' in kwargs:
             created_by = kwargs.get('created_by')
 
@@ -150,7 +159,7 @@ def create_leave_request(**kwargs):
 
         if created_by and Employee.objects.filter(id=created_by).exists():
             emp_obj = Employee.objects.get(id=created_by)
-            if emp_obj.role_id == Roles.EXECUTIVE:
+            if emp_obj.role_id != Roles.ADMIN:
                 leave_reason = data.get('reason', None)
                 date = datetime.strptime(data.get('date'), '%Y-%m-%d').date()
 

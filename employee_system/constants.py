@@ -16,15 +16,14 @@ class Error(object):
     EMPLOYEE_CREATION_ERROR = "Error in adding Employee"
     EMPLOYEE_DELETION_ERROR = "Error in removing Employee"
     EMPLOYEE_ID_MISSING="Employee ID is missing"
-    EMPLOYEE_CREATION_UNAUTHORIZED = "You are an executive and thus not authorized to add this employee."
+    EMPLOYEE_CREATION_UNAUTHORIZED = "You are not authorized to add this employee."
     EMPLOYEE_DELETION_UNAUTHORIZED = "You are not authorized to remove this employee."
     EMPLOYEE_NOT_EXIST = "Employee does not exist."
-    EMPLOYEE_FETCHING_ERROR = "Error in fetching employee"
+    EMPLOYEE_FETCHING_ERROR = "Error in fetching employee."
+    EMPLOYEE_VIEWING_UNAUTHORIZED = "You are not authorized to view this profile."
 
     LEAVE_REQUEST_CREATION_ERROR = "Error in creating leave request"
     LEAVE_REQUEST_CREATION_UNAUTHORIZED = "You are not authorized to create this leave request."
-
-    EMPLOYEE_NOT_ALLOWED_TO_VIEW_PROFILE = "You are not allowed to view this profile."
 
 
 class Warn(object):
