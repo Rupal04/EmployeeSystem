@@ -1,4 +1,5 @@
-#!/Users/rupalgupta/Documents/PractiseProjects/nutrabay/venv/bin/python
+#!/Users/rupalgupta/Downloads/nutrabay/venv/bin/python
+
 # -*- coding: utf-8 -*-
 import re
 import sys

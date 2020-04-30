@@ -1,4 +1,4 @@
-#!/Users/rupalgupta/Documents/PractiseProjects/nutrabay/venv/bin/python
+#!/Users/rupalgupta/Downloads/nutrabay/venv/bin/python
 from django.core import management
 
 if __name__ == "__main__":
