@@ -70,7 +70,7 @@ class EmployeeViewSet(viewsets.ViewSet):
 
             if not response:
                 response = ErrorResponse(msg=Error.EMPLOYEE_FETCHING_ERROR)
-                return Response(to_dict(response), status=status.HTTP_501_NOT_IMPLEMENTED)
+                return Response(to_dict(response), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             return Response(to_dict(response), status=status.HTTP_200_OK)
 
