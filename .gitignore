@@ -1,2 +1,3 @@
 employee_system/migrations/*
 venv/*
+.idea/*
