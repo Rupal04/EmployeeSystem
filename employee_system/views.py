@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
-
 import logging
 
 from rest_framework import viewsets, status
-from employee_system.constants import Error, Warn, Roles, Success
+from employee_system.constants import Error, Warn
 from rest_framework.response import Response
 from employee_system.response import ServerErrorResponse, SuccessResponse, ErrorResponse
 from employee_system.utility import to_dict, get_employee_data, create_leave_request, create_employee, delete_employee
-from employee_system.models import Employee, LeaveRequest
-from django.http import JsonResponse
-
 
 logger = logging.getLogger(__name__)
 
